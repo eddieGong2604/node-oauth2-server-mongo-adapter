@@ -1,0 +1,19 @@
+{
+  "name": "oauth2-server-mongo-adapter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eddieGong2604/node-oauth2-server-mongo-adapter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eddieGong2604/node-oauth2-server-mongo-adapter/issues"
+  },
+  "homepage": "https://github.com/eddieGong2604/node-oauth2-server-mongo-adapter#readme"
+}
