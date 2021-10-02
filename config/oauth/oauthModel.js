@@ -2,7 +2,7 @@ const oauthDB = require("../../repository/oauthRepository");
 
 module.exports = {
     getClient: async (clientId, clientSecret) => {
-        console.log("GETTING CLIENT with clientId: " + clientId + " clientSecret: " + clientSecret);
+        console.log("GETTING CLIENT with clientId: " + clientId);
         const client = await oauthDB.OAuthClientsModel.findOne({clientId: clientId}).exec();
         const result = {
             clientId: client.clientId,

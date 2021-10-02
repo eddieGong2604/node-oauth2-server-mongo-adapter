@@ -1,5 +1,7 @@
 const oauthRepository = require("../repository/oauthRepository");
 const uuid = require('uuid');
+const {REFRESH_TOKEN_GRANT} = require("../constants/oauthConstants");
+const {AUTHORIZATION_CODE_GRANT} = require("../constants/oauthConstants");
 const getClientByClientIdService = async (client_id) => {
     return await oauthRepository.OAuthClientsModel.findOne({clientId: client_id}).exec();
 }
@@ -9,7 +11,7 @@ const createClientService = async (createClientDTO) => {
         clientSecret: "secret", //TODO: research on how to generate a secure client_secret
         redirectUris: [createClientDTO.redirectUri],
         clientName: createClientDTO.clientName, //TODO: in real CashD App, we may need more information about the client than only clientName
-        grants: ["authorization_code", "refresh_token"]
+        grants: [AUTHORIZATION_CODE_GRANT, REFRESH_TOKEN_GRANT]
     });
     return client;
 }
