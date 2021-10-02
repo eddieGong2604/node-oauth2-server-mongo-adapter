@@ -15,17 +15,18 @@ const cashDUserOAuthLoginController = async (req, res) => {
 }
 
 const allowMerchantsController = async (req, res, next) => {
-    if(!req.session.user){
+    if (!req.session.user) {
         res.status(401).json({success: false, message: "Please login"});
         return;
     }
-    if(!req.body.aggreeToConsent){
+    if (!req.body.agreeConsent) {
         res.status(401).json({success: false, message: "User declined consent"});
         return;
     }
     const userId = req.session.user.userId;
     const clientId = req.session.client.clientId;
     req.body.scope = await oauthAuthService.getMerchantScopeService(userId, clientId);
+
     next();
 }
 module.exports = {cashDUserOAuthLoginController, allowMerchantsController};

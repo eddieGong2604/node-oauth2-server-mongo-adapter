@@ -17,10 +17,10 @@ mongoose.model('OAuthScopes', new Schema({
 
 mongoose.model('OAuthTokens', new Schema({
     accessToken: {type: String},
-    accessTokenExpiresOn: {type: Date},
+    accessTokenExpiresAt: {type: Date},
     client: {type: Object},
     refreshToken: {type: String},
-    refreshTokenExpiresOn: {type: Date},
+    refreshTokenExpiresAt: {type: Date},
     user: {type: Object},
     scope: {type: String}
 }));

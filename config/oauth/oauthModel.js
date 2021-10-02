@@ -15,43 +15,64 @@ module.exports = {
             resolve(result);
         })
     },
-    generateAccessToken: (client, user, scope) => { // generates access tokens
-
-    },
+    // generateAccessToken: (client, user, scope) => {
+    //     //TODO: Generate an access token using JWT
+    // },
+    // generateRefreshToken: (client, user, scope) => {
+    //     //TODO: Generate an refresh token using JWT
+    // }
+    // ,
     saveToken: async (token, client, user) => {
-        console.log("SAVING ACCESS TOKEN......");
+        console.log("SAVING ACCESS TOKEN......", token);
         const oauthAccessToken = (await oauthDB.OAuthTokensModel.create({
             accessToken: token.accessToken,
-            accessTokenExpiresOn: token.accessTokenExpiresOn,
-            refreshToken: token.refreshToken, // NOTE this is only needed if you need refresh tokens down the line
+            accessTokenExpiresAt: token.accessTokenExpiresAt,
+            refreshToken: token.refreshToken,
             refreshTokenExpiresAt: token.refreshTokenExpiresAt,
             client: client,
             user: user,
             scope: token.scope
         }));
-        console.log(oauthAccessToken);
-        return new Promise(resolve => resolve(oauthAccessToken));
+        const tokenToReturn = {
+            accessToken: oauthAccessToken.accessToken,
+            accessTokenExpiresAt: oauthAccessToken.accessTokenExpiresAt,
+            refreshToken: oauthAccessToken.refreshToken,
+            refreshTokenExpiresAt: oauthAccessToken.refreshTokenExpiresAt,
+            client: oauthAccessToken.client,
+            user: oauthAccessToken.user,
+            scope: oauthAccessToken.scope
+        }
+        return new Promise(resolve => resolve(tokenToReturn));
 
     },
-    getAccessToken: async token => {
+    getAccessToken: async accessToken => {
         const oauthToken = await oauthDB.OAuthTokensModel.findOne({
-            accessToken: token.accessToken
+            accessToken
         });
         console.log("GETTING ACCESS TOKEN......");
         console.log(oauthToken);
         return new Promise(resolve => resolve(oauthToken));
     },
-    getRefreshToken: async token => {
+    getRefreshToken: async refreshToken => {
         const oauthToken = await oauthDB.OAuthTokensModel.findOne({
-            refreshToken: token.refreshToken
+            refreshToken
         });
-        console.log("GETTING REFRESH TOKEN......");
+        console.log("GETTING REFRESH TOKEN......", refreshToken);
         console.log(oauthToken);
         return new Promise(resolve => resolve(oauthToken))
     },
-    revokeToken: token => {
-
-        return new Promise(resolve => resolve(true))
+    revokeToken: async token => {
+        let tokenFoundAndDeleted;
+        try {
+            console.log("REVOKING ACCESS TOKEN......", token);
+            await oauthDB.OAuthTokensModel.deleteOne({
+                accessToken: token.accessToken
+            });
+            tokenFoundAndDeleted = true;
+        } catch (e) {
+            tokenFoundAndDeleted = false;
+        }
+        return new Promise(resolve => resolve(tokenFoundAndDeleted))
     },
     saveAuthorizationCode: async (code, client, user) => {
         const authCode = (await oauthDB.OAuthAuthorizationCodes.create({
@@ -62,15 +83,17 @@ module.exports = {
             scope: code.scope
         }));
         console.log("SAVING AUTHORIZATION_CODE......");
-        authCode.redirectUri =  code.redirectUri;
+        authCode.redirectUri = code.redirectUri;
         console.log(authCode);
         return new Promise(resolve => resolve(authCode))
     },
     getAuthorizationCode: async code => {
+
         const authCode = await oauthDB.OAuthAuthorizationCodes.findOne({
-            authorizationCode: code.authorizationCode
+            authorizationCode: code
         }).exec();
         console.log("GETTING AUTHORIZATION_CODE......");
+        console.log(code);
         console.log(authCode);
         return new Promise(resolve => {
             resolve(authCode)
@@ -89,26 +112,31 @@ module.exports = {
         }
         return new Promise(resolve => resolve(codeFoundAndDeleted))
     },
+    validateScope: (user, client, scope) => {
+        console.log("GETTING ALLOWED SCOPE BETWEEN USER ", user, "AND CLIENT ", client);
+        //TODO: making mongoose call to get scope between user and client
+
+        //In this case Im returning hardcoded scope
+        return new Promise(resolve => resolve("read:wallet,write:wallet"));
+    }
+    ,
     verifyScope: (token, scope) => {
+        //If allowed scope is the subset of the scopes that a token has, allow that request
         let tokenScopeSet = new Set(token.scope.split(","));
         let scopeToVerifySet = new Set(scope.split(","));
         console.log("VERIFYING SCOPE......");
         console.log("TOKEN SCOPE: ", tokenScopeSet);
-        console.log("SCOPE TO VERIFY: ", scopeToVerifySet);
+        console.log("SCOPE NEEDED FOR THIS ENDPOINT: ", scopeToVerifySet);
 
-        if (tokenScopeSet.size !== scopeToVerifySet.size) {
+        if (tokenScopeSet.size < scopeToVerifySet.size) {
             return new Promise(resolve => resolve(false))
         }
-        for (let scope of tokenScopeSet) {
-            if (scopeToVerifySet.has(scope)) {
-                scopeToVerifySet.delete(scope);
+        for (let scope of scopeToVerifySet) {
+            if (!tokenScopeSet.has(scope)) {
+                return new Promise(resolve => resolve(false));
             }
         }
-        if (scopeToVerifySet.size === 0) {
-            return new Promise(resolve => resolve(true));
-        } else {
-            return new Promise(resolve => resolve(false));
-        }
+        return new Promise(resolve => resolve(true));
 
 
     }
