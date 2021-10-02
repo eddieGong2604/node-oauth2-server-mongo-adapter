@@ -1,4 +1,4 @@
-const oauthRepository = require("./oauthRepository");
+const oauthRepository = require("../repository/oauthRepository");
 const getClientByClientIdService = async (client_id) => {
     return await oauthRepository.OAuthClientsModel.findOne({clientId: client_id}).exec();
 }

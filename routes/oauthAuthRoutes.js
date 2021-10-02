@@ -1,7 +1,7 @@
 const express = require('express')
 
-const oauthAuthController = require('./oauthAuthController');
-const oauthServer = require('./oauthServer')
+const oauthAuthController = require('../controller/oauthAuthController');
+const oauthServer = require('../config/oauth/oauthServer')
 const router = express.Router();
 router.post('/login', oauthAuthController.cashDUserOAuthLoginController);
 router.post('/allow-merchants', oauthAuthController.allowMerchantsController,

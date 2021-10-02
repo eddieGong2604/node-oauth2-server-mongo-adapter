@@ -1,5 +1,5 @@
 const express = require('express')
-const oauthClientController = require("./oauthClientController");
+const oauthClientController = require("../controller/oauthClientController");
 const router = express.Router();
 
 router.post('/register', oauthClientController.registerClient);

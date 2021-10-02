@@ -1,4 +1,4 @@
-const oauthClientService = require("./oauthClientService");
+const oauthClientService = require("../service/oauthClientService");
 const registerClient = async (req, res) => {
     const createClientDTO = req.body;
     const newClient = oauthClientService.createClientService(createClientDTO);

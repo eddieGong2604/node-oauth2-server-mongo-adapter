@@ -30,14 +30,15 @@ mongoose.model('OAuthAuthorizationCodes', new Schema({
     expiresAt: {type: Date},
     client: {type: Object},
     user: {type: Object},
-    redirectUri : {type: String}
+    scope: {type: String}
 }))
 
 mongoose.model('OAuthClients', new Schema({
     clientId: {type: String},
     clientName: {type: String},
     clientSecret: {type: String},
-    redirectUris: {type: Array}
+    redirectUris: {type: Array},
+    grants: {type: Array}
 }));
 
 /***
