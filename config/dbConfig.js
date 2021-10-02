@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const DB_URL = 'mongodb://localhost:27107/oauth2_playground';
+const DB_URL = 'mongodb://localhost:27017/oauth2_playground';
 
 mongoose.connect(DB_URL, function (err, res) {
     if (err) {
@@ -11,3 +11,4 @@ mongoose.connect(DB_URL, function (err, res) {
 });
 mongoose.Promise = global.Promise;
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+module.exports = mongoose;

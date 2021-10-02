@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 
-const mongoose = require('mongoose');
+const mongoose = require('../config/dbConfig');
 
 const Schema = mongoose.Schema;
 /**

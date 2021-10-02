@@ -10,7 +10,9 @@ router.post('/allow-merchants', oauthAuthController.allowMerchantsController,
     },
     oauthServer.authorize({
         authenticateHandler: {
-            handle: req => req.session.user
+            handle: req => {
+                return req.session.user;
+            }
         }
     })
 );

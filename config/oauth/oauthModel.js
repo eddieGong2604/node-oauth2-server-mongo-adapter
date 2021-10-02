@@ -3,7 +3,7 @@ const oauthDB = require("../../repository/oauthRepository");
 module.exports = {
     getClient: async (clientId, clientSecret) => {
         console.log("GETTING CLIENT with clientId: " + clientId + " clientSecret: " + clientSecret);
-        const client = await oauthDB.OAuthClientsModel.findOne({clientId: clientId, clientSecret: clientSecret}).exec();
+        const client = await oauthDB.OAuthClientsModel.findOne({clientId: clientId}).exec();
         const result = {
             clientId: client.clientId,
             clientSecret: client.clientSecret,
@@ -20,7 +20,7 @@ module.exports = {
     },
     saveToken: async (token, client, user) => {
         console.log("SAVING ACCESS TOKEN......");
-        const oauthAccessToken = await oauthDB.OAuthTokensModel.create({
+        const oauthAccessToken = (await oauthDB.OAuthTokensModel.create({
             accessToken: token.accessToken,
             accessTokenExpiresOn: token.accessTokenExpiresOn,
             refreshToken: token.refreshToken, // NOTE this is only needed if you need refresh tokens down the line
@@ -28,7 +28,7 @@ module.exports = {
             client: client,
             user: user,
             scope: token.scope
-        });
+        }));
         console.log(oauthAccessToken);
         return new Promise(resolve => resolve(oauthAccessToken));
 
@@ -54,20 +54,17 @@ module.exports = {
         return new Promise(resolve => resolve(true))
     },
     saveAuthorizationCode: async (code, client, user) => {
-        const authCode = await oauthDB.OAuthAuthorizationCodes.create({
+        const authCode = (await oauthDB.OAuthAuthorizationCodes.create({
             authorizationCode: code.authorizationCode,
             expiresAt: code.expiresAt,
             user: user,
             client: client,
             scope: code.scope
-        });
+        }));
         console.log("SAVING AUTHORIZATION_CODE......");
+        authCode.redirectUri =  code.redirectUri;
         console.log(authCode);
-
-
-        return new Promise(resolve => resolve(Object.assign({
-            redirectUri: `${code.redirectUri}`,
-        }, authCode)))
+        return new Promise(resolve => resolve(authCode))
     },
     getAuthorizationCode: async code => {
         const authCode = await oauthDB.OAuthAuthorizationCodes.findOne({
