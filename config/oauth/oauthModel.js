@@ -1,4 +1,6 @@
 const oauthDB = require("../../repository/oauthRepository");
+const { JWT_SECRET, JWT_LIFETIME } = require('../../constants/oauthConstants')
+const jwt = require('jsonwebtoken')
 
 module.exports = {
     getClient: async (clientId, clientSecret) => {
@@ -15,13 +17,39 @@ module.exports = {
             resolve(result);
         })
     },
-    // generateAccessToken: (client, user, scope) => {
-    //     //TODO: Generate an access token using JWT
-    // },
-    // generateRefreshToken: (client, user, scope) => {
-    //     //TODO: Generate an refresh token using JWT
-    // }
-    // ,
+    generateAccessToken: async (client, user, scope) => {
+        console.log("GENERATING ACCESS TOKEN......")
+        const token = await jwt.sign(
+            {
+                "scope":scope
+            }, 
+            JWT_SECRET,
+            {
+                expiresIn: JWT_LIFETIME
+            }
+        )
+        
+        console.log(`TOKEN: ${token}`)
+        return token
+        //TODO: Generate an access token using JWT
+    },
+    generateRefreshToken: async (client, user, scope) => {
+        //TODO: Generate an refresh token using JWT
+        console.log("GENERATING REFRESH TOKEN......")
+        const token = await jwt.sign(
+            {
+                "scope":scope
+            }, 
+            JWT_SECRET,
+            {
+                expiresIn: JWT_LIFETIME
+            }
+        )
+        
+        console.log(`TOKEN: ${token}`)
+        return token
+
+    },
     saveToken: async (token, client, user) => {
         console.log("SAVING ACCESS TOKEN......", token);
         const oauthAccessToken = (await oauthDB.OAuthTokensModel.create({

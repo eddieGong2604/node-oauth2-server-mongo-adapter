@@ -3,7 +3,9 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const sessionConfig = require('./config/sessionConfig');
 const app = express();
+const morgan = require('morgan')
 
+app.use(morgan('dev'))
 app.use(sessionConfig);
 app.use(cookieParser());
 app.use(bodyParser.json());
